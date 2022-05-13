@@ -2,16 +2,17 @@ package com.startwebsitedevelopment.flashlight
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.Toast
-import android.widget.ToggleButton
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Check if Flash is available
-        var isFlashAvailable : Boolean = applicationContext.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
+        val isFlashAvailable : Boolean = applicationContext.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
 
         if(!isFlashAvailable){
             noFlashError()
@@ -37,6 +38,9 @@ class MainActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
+        switchFlashLight(true)
+
+        switchToggle.isChecked = true
         switchToggle.setOnCheckedChangeListener{_, isChecked -> switchFlashLight(isChecked)}
     }
 
@@ -56,6 +60,24 @@ class MainActivity : AppCompatActivity() {
             }
         }catch (e: CameraAccessException){
             e.printStackTrace()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.settings_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.suggestion_item -> {
+                val intent = Intent(this, SuggestionForm::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }
